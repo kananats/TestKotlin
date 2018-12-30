@@ -9,6 +9,10 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
+import android.app.Activity
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +22,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // hide keyboard when lose focus
+        this.editText1.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus) { this.hideKeyboard(view) }
+        }
+
+        // observe changes from EditText
         val observable = Observable.create<String> { emitter ->
             val textWatcher = object : TextWatcher {
 
@@ -35,17 +45,13 @@ class MainActivity : AppCompatActivity() {
             emitter.setCancellable { this.editText1.removeTextChangedListener(textWatcher) }
         }
 
+        // forward changes to TextView
         observable.subscribe { item -> this.textView1.text = item }
             .addTo(this.disposeBag)
+    }
 
-
-        Observable.just(1, 2, 1, 2)
-            .subscribe { item ->
-                Log.i("com.kananats", "${item}")
-            }
-            .addTo(disposeBag)
-        this.textView1.text = "kuy"
-
-        Log.i("com.kananats", "test")
+    fun hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
