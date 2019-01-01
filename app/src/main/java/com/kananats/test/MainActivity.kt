@@ -4,10 +4,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
 import android.app.Activity
 import android.support.v7.widget.LinearLayoutManager
@@ -17,7 +15,7 @@ import android.view.inputmethod.InputMethodManager
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewAdapter: MyAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
 
     private val disposeBag = CompositeDisposable()
@@ -50,21 +48,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         // forward changes to TextView
-        observable.subscribe { item -> this.textView1.text = item }
-            .addTo(this.disposeBag)
+        // observable.subscribe { item -> this.textView1.text = item }
+        //   .addTo(this.disposeBag)
 
         // initialize RecyclerView
 
         this.viewManager = LinearLayoutManager(this)
-        this.viewAdapter = MyAdapter(arrayOf("1", "2", "3"))
+        this.viewAdapter = MyAdapter(arrayOf("1", "2", "3", "4"))
 
         this.recyclerView1.apply {
-            setHasFixedSize(true)
+            // setHasFixedSize(true)
             adapter = viewAdapter
             layoutManager = viewManager
         }
 
-        // this.recyclerView1.scrollChangeEvents()
+        this.viewAdapter.strings.value!![1] = "Sus"
     }
 
     private fun dismissKeyboard(view: View) {
